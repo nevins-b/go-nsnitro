@@ -41,14 +41,14 @@ func (c *Client) AddServer(server Server) error {
 		})
 }
 
-func (c *Client) ServerPerformAction(server Server, params *map[string]string) error {
+func (c *Client) ServerPerformAction(server Server, query map[string]string) error {
 	return c.do("POST",
 		nsrequest{
-			Type: "server",
+			Type:  "server",
+			Query: query,
 		},
 		&nsresource{
 			Server: &server,
-			Params: params,
 		})
 }
 

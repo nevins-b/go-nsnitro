@@ -30,10 +30,9 @@ type Client struct {
 }
 
 type nsrequest struct {
-	Type   string
-	Name   string
-	Query  map[string]string
-	Params map[string]string
+	Type  string
+	Name  string
+	Query map[string]string
 }
 
 type payload struct {
@@ -47,7 +46,6 @@ type nsresource struct {
 	ServiceGroup                 *ServiceGroup                 `json:"servicegroup,omitempty"`
 	ServiceGroupLBMonitorBinding *ServiceGroupLBMonitorBinding `json:"servicegroup_lbmonitor_binding,omitempty"`
 	ServiceGroupServerBinding    *ServiceGroupServerBinding    `json:"servicegroup_servicegroupmember_binding,omitempty"`
-	Params                       *map[string]string            `json:"params,omitempty"`
 }
 
 type nsresult struct {
