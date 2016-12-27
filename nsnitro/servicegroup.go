@@ -50,13 +50,13 @@ func (c *Client) AddServiceGroup(serviceGroup ServiceGroup) error {
 		})
 }
 
-func (c *Client) ServiceGroupPerformAction(serviceGroup ServiceGroup, params *map[string]string) error {
+func (c *Client) ServiceGroupPerformAction(serviceGroup ServiceGroup, query map[string]string) error {
 	return c.do("POST",
 		nsrequest{
-			Type: "servicegroup",
+			Type:  "servicegroup",
+			Query: query,
 		},
 		&nsresource{
-			Params:       params,
 			ServiceGroup: &serviceGroup,
 		})
 }
