@@ -1,9 +1,11 @@
 package nsnitro
 
 type Server struct {
-	Name  string `json:"name"`
-	IP    string `json:"ipaddress"`
-	State string `json:"state,omitempty"`
+	Name     string `json:"name"`
+	IP       string `json:"ipaddress"`
+	State    string `json:"state,omitempty"`
+	Delay    string `json:"delay,omitempty"`
+	Graceful string `json:"graceful,omitempty"`
 }
 
 func NewServer(name, ip string) Server {
@@ -13,8 +15,10 @@ func NewServer(name, ip string) Server {
 func (c *Client) GetServer(name string) (Server, error) {
 	servers := []Server{}
 	err := c.fetch(nsrequest{
-		Type: "server", Name: name,
-	}, &servers)
+		Type: "server",
+		Name: name,
+	},
+		&servers)
 	if err != nil {
 		return Server{}, err
 	}
@@ -34,6 +38,17 @@ func (c *Client) AddServer(server Server) error {
 		},
 		&nsresource{
 			Server: &server,
+		})
+}
+
+func (c *Client) ServerPerformAction(server Server, params *map[string]string) error {
+	return c.do("POST",
+		nsrequest{
+			Type: "server",
+		},
+		&nsresource{
+			Server: &server,
+			Params: params,
 		})
 }
 

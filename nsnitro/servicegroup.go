@@ -1,9 +1,14 @@
 package nsnitro
 
 type ServiceGroup struct {
-	Name  string `json:"servicegroupname"`
-	Type  string `json:"servicetype"`
-	State string `json:"state,omitempty"`
+	Name           string `json:"servicegroupname"`
+	Type           string `json:"servicetype,omitempty"`
+	State          string `json:"state,omitempty"`
+	Server         string `json:"servername,omitempty"`
+	Port           int    `json:"port,omitempty"`
+	Graceful       string `json:"graceful,omitempty"`
+	Delay          int    `json:"delay,omitempty"`
+	EffectiveState string `json:"servicegroupeffectivestate,omitempty"`
 }
 
 func NewServiceGroup(name, serviceType string) ServiceGroup {
@@ -41,6 +46,17 @@ func (c *Client) AddServiceGroup(serviceGroup ServiceGroup) error {
 			Type: "servicegroup",
 		},
 		&nsresource{
+			ServiceGroup: &serviceGroup,
+		})
+}
+
+func (c *Client) ServiceGroupPerformAction(serviceGroup ServiceGroup, params *map[string]string) error {
+	return c.do("POST",
+		nsrequest{
+			Type: "servicegroup",
+		},
+		&nsresource{
+			Params:       params,
 			ServiceGroup: &serviceGroup,
 		})
 }

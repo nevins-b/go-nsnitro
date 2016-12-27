@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/dylanmei/go-nsnitro/nsnitro"
+	"github.com/nevins-b/go-nsnitro/nsnitro"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 

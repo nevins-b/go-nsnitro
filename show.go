@@ -5,8 +5,8 @@ import (
 
 	"gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/dylanmei/go-nsnitro/nsnitro"
 	"github.com/fatih/color"
+	"github.com/nevins-b/go-nsnitro/nsnitro"
 	"github.com/rodaine/table"
 )
 

@@ -30,11 +30,15 @@ type Client struct {
 }
 
 type nsrequest struct {
-	Type  string
-	Name  string
-	Query map[string]string
+	Type   string
+	Name   string
+	Query  map[string]string
+	Params map[string]string
 }
 
+type payload struct {
+	Object *nsresource `json:"object"`
+}
 type nsresource struct {
 	LBMonitor                    *LBMonitor                    `json:"lbmonitor,omitempty"`
 	LBVServer                    *LBVServer                    `json:"lbvserver,omitempty"`
@@ -43,6 +47,7 @@ type nsresource struct {
 	ServiceGroup                 *ServiceGroup                 `json:"servicegroup,omitempty"`
 	ServiceGroupLBMonitorBinding *ServiceGroupLBMonitorBinding `json:"servicegroup_lbmonitor_binding,omitempty"`
 	ServiceGroupServerBinding    *ServiceGroupServerBinding    `json:"servicegroup_servicegroupmember_binding,omitempty"`
+	Params                       *map[string]string            `json:"params,omitempty"`
 }
 
 type nsresult struct {
@@ -106,18 +111,24 @@ func (c *Client) do(verb string, request nsrequest, resource *nsresource) error 
 		path = path + "?" + querystr(request.Query)
 	}
 
+	obj := payload{
+		Object: resource,
+	}
 	var buffer io.Reader
 	var contentType string
 	if resource != nil {
 		var b []byte
-		b, err := json.Marshal(resource)
+		b, err := json.Marshal(obj)
 		if err != nil {
 			return err
+		}
+		if log.IsDebug() {
+			log.Debug("%s", string(b))
 		}
 		buffer = bytes.NewReader(b)
 		contentType = fmt.Sprintf("application/vnd.com.citrix.netscaler.%s+json", request.Type)
 	}
-
+	log.Info("%s", path)
 	req, err := c.request(verb, path, buffer)
 	if err != nil {
 		return err
@@ -164,7 +175,7 @@ func (c *Client) do(verb string, request nsrequest, resource *nsresource) error 
 		return nil
 	}
 
-	return errors.New(fmt.Sprintf("Unexpected HTTP status: %d", res.StatusCode))
+	return errors.New(fmt.Sprintf("Unexpected HTTP status: %d for %s, %s", res.StatusCode, path, string(body)))
 }
 
 func (c *Client) fetch(request nsrequest, result interface{}) error {
@@ -212,7 +223,6 @@ func (c *Client) fetch(request nsrequest, result interface{}) error {
 
 		return json.Unmarshal(data, result)
 	}
-
 	return errors.New(fmt.Sprintf("Unexpected HTTP status: %d", res.StatusCode))
 }
 
